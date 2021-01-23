@@ -8,12 +8,10 @@ Allah says in the Quran:
 
 >He is Allah, the Creator, the Inventor, the Fashioner; to Him belong the best names. (Quran 59:24)
 
-Hadith:
-Prophet Muhammad (ﷺ) said, “Allah has ninety-nine names, i.e. one-hundred minus one, and whoever knows them will go to Paradise.”
-(Sahih Bukhari 50:894)
+Hadith:<br>
+> Prophet Muhammad (ﷺ) said, “Allah has ninety-nine names, i.e. one-hundred minus one, and whoever knows them will go to Paradise.” (Sahih Bukhari 50:894)
 
-Abu Huraira reported Allah’s Messenger (ﷺ) as saying: There are ninety-nine names of Allah; he who commits them to memory would get into Paradise. Verily, Allah is Odd (He is one, and it is an odd number) and He loves odd number..”
-(Sahih Muslim Book-48 Hadith-5)
+> Abu Huraira reported Allah’s Messenger (ﷺ) as saying: There are ninety-nine names of Allah; he who commits them to memory would get into Paradise. Verily, Allah is Odd (He is one, and it is an odd number) and He loves odd number..” (Sahih Muslim Book-48 Hadith-5)
 
 I hope this app could help learning and using the learned names for invoking Allah. 
 
