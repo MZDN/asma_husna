@@ -1,8 +1,8 @@
-# asma_husna
+## asma_husna
 
 Asma’ Allah al-Ḥusná - أسماء الله الحسنى - Best Names of Allah - Allahs schöne Namen - Les plus beaux noms d' Allah.
 
-# How important is to learn the best Names of Allah?
+## How important is to learn the best Names of Allah?
 ### Quran
 
 Allah says in the Quran:
@@ -19,7 +19,7 @@ Allah says in the Quran:
 
 > Abu Huraira reported Allah’s Messenger (ﷺ) as saying: There are ninety-nine names of Allah; he who commits them to memory would get into Paradise. Verily, Allah is Odd (He is one, and it is an odd number) and He loves odd number..” (Sahih Muslim Book-48 Hadith-5)
 
-# What is the purpose of this project?
+## What is the purpose of this project?
 
 The purpose of this project is to help anyone learn and use the learned names for invoking Allah. 
 
