@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -102,13 +103,88 @@ class _NamesPageState extends State<NamesPage> {
 
   //final TextStyle _biggerFont = const TextStyle(fontSize: 18.0);
 
-  static AudioCache player = AudioCache();
+  //static AudioCache player = AudioCache();
+  List newTaskTitle;
+  String path;
+  bool playing = false;
+  Duration _duration = new Duration();
+  Duration _position = new Duration();
+  AudioPlayer audioPlayer;
+  AudioCache audioCache;
 
   @override
   void initState() {
     super.initState();
     futureNames = fetchNames();
+    //init player
+    initPlayer();
   }
+  void initPlayer(){
+    audioPlayer = new AudioPlayer();
+    audioCache = new AudioCache(fixedPlayer: audioPlayer);
+
+    // ignore: deprecated_member_use
+    audioPlayer.durationHandler = (d) => setState(() {
+      _duration = d;
+    });
+
+    // ignore: deprecated_member_use
+    audioPlayer.positionHandler = (p) => setState(() {
+      _position = p;
+    });
+  }
+  //Button Widget
+  Widget _btn(String txt, VoidCallback onPressed) {
+    return ButtonTheme(
+        minWidth: 48.0,
+        child: RaisedButton(child: Text(txt), onPressed: onPressed));
+  }
+  //Slider Widget
+  Widget slider() {
+    return Slider(
+        value: _position.inSeconds.toDouble(),
+        min: 0.0,
+        max: _duration.inSeconds.toDouble(),
+        onChanged: (double value) {
+          setState(() {
+            seekToSecond(value.toInt());
+            value = value;
+          });});
+  }
+  //Seek Seconds
+  void seekToSecond(int second){
+    Duration newDuration = Duration(seconds: second);
+    audioPlayer.seek(newDuration);
+  }
+  // Tab For the player is here
+  Widget _tab(List<Widget> children) {
+    return Center(
+      child: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          children: children
+              .map((w) => Container(child: w, padding: EdgeInsets.all(6.0)))
+              .toList(),
+        ),
+      ),
+    );
+  }
+
+  //Audio Play Function
+  playAudio(String track){
+    return audioCache.play(track);
+  }
+
+  //Audio pause Function
+  pauseAudio(){
+    return audioPlayer.pause();
+  }
+
+  //Audio Stop Function
+  stopAudio(){
+    return audioPlayer.stop();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -145,12 +221,8 @@ class _NamesPageState extends State<NamesPage> {
           actions: <Widget>[
             // Add 3 lines from here...
             new IconButton(
-              onPressed: () {
-                //showSearch(context: context, delegate: Search(widget._nameForDisplay));
-                //player.play("audio/all.mp3");
-              },
-              icon: Icon(Icons.play_circle_fill),
-            ),
+                icon: Icon(Icons.play_circle_fill),
+                onPressed:_showPlayer),
             new IconButton(
               onPressed: () {
                 showSearch(context: context, delegate: Search(widget._nameForDisplay));
@@ -177,11 +249,62 @@ class _NamesPageState extends State<NamesPage> {
             },
           ),
         ),
+
       ),
     );
   }
 
+void _showPlayer(){
 
+  showModalBottomSheet<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        height: 90,
+        child: Center(
+          child:Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.play_arrow,
+                ),
+                iconSize: 40,
+                color: Colors.blueAccent,
+                onPressed: (){
+                  playAudio("audio/all.mp3");
+                },
+              ),
+              SizedBox(width: 30.0,),
+              IconButton(
+                icon: Icon(
+                  Icons.pause,
+                ),
+                iconSize: 40,
+                color: Colors.blueAccent,
+                onPressed: (){
+                  pauseAudio();
+                },
+              ),
+              SizedBox(width: 30.0,),
+              IconButton(
+                icon: Icon(
+                  Icons.stop,
+                ),
+                iconSize: 40,
+                color: Colors.blueAccent,
+                onPressed: (){
+                  stopAudio();
+                },
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
   void _pushSaved() {
     Navigator.of(context).push(
       new MaterialPageRoute<void>(
@@ -234,8 +357,9 @@ class _NamesPageState extends State<NamesPage> {
                 ),
                 onTap: () {
                   // you can add Play/push code over here
-                  print("audio/" + name.number + ".mp3");
-                  player.play("audio/" + name.number + ".mp3");
+                  //print("audio/" + name.number + ".mp3");
+                  //player.play("audio/" + name.number + ".mp3");
+                  playAudio("audio/" + name.number + ".mp3");
                 },
               );
             },
