@@ -26,10 +26,14 @@ dependencies:
   convert: ^2.1.1
   http: ^0.12.0+1
   google_fonts_arabic: ^1.1.7
+  easy_localization: ^3.0.0-dev.1
+  audioplayers: ^0.12.1
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
 
 # For information on the generic Dart part of this file, see the
@@ -37,6 +41,9 @@ dev_dependencies:
 
 # The following section is specific to Flutter.
 flutter:
+  # Importing assets used here
+  assets:
+    - assets/audio/
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
