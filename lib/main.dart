@@ -226,7 +226,7 @@ class _NamesPageState extends State<NamesPage> {
               fontFamily: ArabicFonts.Amiri,
               fontWeight: FontWeight.bold,
               package: 'google_fonts_arabic',
-              fontSize: 30.0,
+              fontSize: 25.0,
             ),
           ),
           actions: <Widget>[
@@ -336,9 +336,10 @@ class _NamesPageState extends State<NamesPage> {
                   ),
                 ),
                 title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     (name.number == "00" || name.number == "85")
-                        ? Text(
+                        ?  Expanded(child: (Text(
                             name.arabic,
                             //style: TextStyle(fontWeight: FontWeight.bold),
                             style: new TextStyle(
@@ -347,10 +348,10 @@ class _NamesPageState extends State<NamesPage> {
                               package: 'google_fonts_arabic',
                               fontSize: 1.0,
                             ),
-                          )
-                        : Text(name.transliteration),
-                    Spacer(flex: 1),
-                    Text(
+                          )),)
+                        :  Expanded(child: (Text(name.transliteration))),
+                    //Spacer(flex: 1),
+                     Expanded(child: (Text(
                       name.arabic,
                       //style: TextStyle(fontWeight: FontWeight.bold),
                       style: new TextStyle(
@@ -359,7 +360,7 @@ class _NamesPageState extends State<NamesPage> {
                         package: 'google_fonts_arabic',
                         fontSize: 25.0,
                       ),
-                    )
+                    )))
                   ],
                 ),
                 subtitle: Text(name.meaning[myLocale.languageCode]),
@@ -382,6 +383,15 @@ class _NamesPageState extends State<NamesPage> {
           return new Scaffold(
             appBar: new AppBar(
               title: const Text('Saved for Learning'),
+                      actions: [
+          new IconButton(
+              onPressed: () {
+                showSearch(
+                    context: context, delegate: Search(widget._nameForDisplay));
+              },
+              icon: Icon(Icons.search),
+            ),
+        ],
             ),
             body: new ListView(children: divided),
           );
@@ -533,9 +543,10 @@ class Search extends SearchDelegate {
             ),
           ),
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               (selectedResult.number == "00" || selectedResult.number == "85")
-                  ? (Text(
+                  ? (Expanded(child:Text(
                       selectedResult.arabic,
                       //style: TextStyle(fontWeight: FontWeight.bold),
                       style: new TextStyle(
@@ -544,10 +555,10 @@ class Search extends SearchDelegate {
                         package: 'google_fonts_arabic',
                         fontSize: 1.0,
                       ),
-                    ))
-                  : Text(selectedResult.transliteration),
-              Spacer(flex: 1),
-              Text(
+                    )))
+                  : Expanded(child:Text(selectedResult.transliteration)),
+              //sSpacer(flex: 1),
+              Expanded(child:Text(
                 selectedResult.arabic,
                 //style: TextStyle(fontWeight: FontWeight.bold),
                 style: new TextStyle(
@@ -556,7 +567,7 @@ class Search extends SearchDelegate {
                   package: 'google_fonts_arabic',
                   fontSize: 25.0,
                 ),
-              ),
+              ),)
             ],
           ),
           subtitle: Text(selectedResult.meaning[myLocale.languageCode]),
@@ -610,10 +621,11 @@ class Search extends SearchDelegate {
             ),
           ),
           title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               (suggestionList[index].number == "00" ||
                       suggestionList[index].number == "85")
-                  ? Text(
+                  ? Expanded(child: Text(
                       suggestionList[index].arabic,
                       //style: TextStyle(fontWeight: FontWeight.bold),
                       style: new TextStyle(
@@ -622,10 +634,10 @@ class Search extends SearchDelegate {
                         package: 'google_fonts_arabic',
                         fontSize: 1.0,
                       ),
-                    )
-                  : Text(suggestionList[index].transliteration),
-              Spacer(flex: 1),
-              Text(
+                    ))
+                  : Expanded(child:Text(suggestionList[index].transliteration)),
+              //Spacer(flex: 1),
+              Expanded(child:Text(
                 suggestionList[index].arabic,
                 //style: TextStyle(fontWeight: FontWeight.bold),
                 style: new TextStyle(
@@ -634,7 +646,7 @@ class Search extends SearchDelegate {
                   package: 'google_fonts_arabic',
                   fontSize: 25.0,
                 ),
-              )
+              ))
             ],
           ),
           subtitle: Text(suggestionList[index].meaning[myLocale.languageCode]),
