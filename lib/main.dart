@@ -414,10 +414,11 @@ class _NamesPageState extends State<NamesPage> {
                   ),
                 ),
                 title: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     (values.names[index].number == "00" ||
                             values.names[index].number == "85")
-                        ? (Text(
+                        ?  Expanded(child: (Text(
                             values.names[index].arabic,
                             //style: TextStyle(fontWeight: FontWeight.bold),
                             style: new TextStyle(
@@ -426,19 +427,19 @@ class _NamesPageState extends State<NamesPage> {
                               package: 'google_fonts_arabic',
                               fontSize: 1.0,
                             ),
-                          ))
-                        : Text(values.names[index].transliteration),
-                    Spacer(flex: 1),
-                    Text(
+                          )))
+                        :  Expanded(child: Text(values.names[index].transliteration)),
+                    //Spacer(flex: 2),
+                    Expanded(child:  Text(
                       values.names[index].arabic,
                       //style: TextStyle(fontWeight: FontWeight.bold),
                       style: new TextStyle(
                         fontFamily: ArabicFonts.Amiri,
                         fontWeight: FontWeight.bold,
                         package: 'google_fonts_arabic',
-                        fontSize: 25.0,
+                        fontSize: 20.0,
                       ),
-                    ),
+                    ),)
                   ],
                 ),
                 subtitle:
