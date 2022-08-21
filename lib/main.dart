@@ -1,16 +1,27 @@
 import 'dart:async';
 import 'dart:convert';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 import 'package:google_fonts_arabic/fonts.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
+
+import 'package:flutter/services.dart' show rootBundle;
+
+Future<String> _loadAsset() async {
+  return await rootBundle.loadString('assets/data/BeautifulNamesOfAllah.json');
+}
+Future<Names> loadData() async {
+  String jsonString = await _loadAsset();
+  final jsonResponse = json.decode(jsonString);
+
+  return Names.fromJson(jsonResponse["AsmaHusna"] as List);
+}
 
 Future<Names> fetchNames() async {
   final response = await http.get(
-      'https://raw.githubusercontent.com/MZDN/asma-u-llahi-l-husna/main/BeautifulNamesOfAllah.json');
+      Uri.parse('https://raw.githubusercontent.com/MZDN/asma-u-llahi-l-husna/main/BeautifulNamesOfAllah.json'));
 
   if (response.statusCode == 200 && json.decode(response.body) != null) {
     // If the server did return a 200 OK response,
@@ -115,30 +126,26 @@ class _NamesPageState extends State<NamesPage> {
   @override
   void initState() {
     super.initState();
-    futureNames = fetchNames();
+    //futureNames = fetchNames();
+    futureNames = loadData();
     //init player
     initPlayer();
   }
-  void initPlayer(){
+
+  void initPlayer() {
     audioPlayer = new AudioPlayer();
     audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
-    // ignore: deprecated_member_use
-    audioPlayer.durationHandler = (d) => setState(() {
-      _duration = d;
-    });
 
-    // ignore: deprecated_member_use
-    audioPlayer.positionHandler = (p) => setState(() {
-      _position = p;
-    });
   }
+
   //Button Widget
   Widget _btn(String txt, VoidCallback onPressed) {
     return ButtonTheme(
         minWidth: 48.0,
         child: RaisedButton(child: Text(txt), onPressed: onPressed));
   }
+
   //Slider Widget
   Widget slider() {
     return Slider(
@@ -149,13 +156,16 @@ class _NamesPageState extends State<NamesPage> {
           setState(() {
             seekToSecond(value.toInt());
             value = value;
-          });});
+          });
+        });
   }
+
   //Seek Seconds
-  void seekToSecond(int second){
+  void seekToSecond(int second) {
     Duration newDuration = Duration(seconds: second);
     audioPlayer.seek(newDuration);
   }
+
   // Tab For the player is here
   Widget _tab(List<Widget> children) {
     return Center(
@@ -171,24 +181,24 @@ class _NamesPageState extends State<NamesPage> {
   }
 
   //Audio Play Function
-  playAudio(String track){
+  playAudio(String track) {
     return audioCache.play(track);
   }
 
   //Audio pause Function
-  pauseAudio(){
+  pauseAudio() {
     return audioPlayer.pause();
   }
 
   //Audio Stop Function
-  stopAudio(){
+  stopAudio() {
     return audioPlayer.stop();
   }
-
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner:false,
       title: 'Asma-اللَّهُ-Husna',
       theme: ThemeData(
         primaryColor: Colors.lightBlue[900],
@@ -209,6 +219,7 @@ class _NamesPageState extends State<NamesPage> {
       ],
       home: Scaffold(
         appBar: AppBar(
+          centerTitle: false,
           title: Text(
             'Asma-اللَّهُ-Husna',
             style: new TextStyle(
@@ -221,18 +232,16 @@ class _NamesPageState extends State<NamesPage> {
           actions: <Widget>[
             // Add 3 lines from here...
             new IconButton(
-                icon: Icon(Icons.play_circle_fill),
-                onPressed:_showPlayer),
+                icon: Icon(Icons.play_circle_fill), onPressed: _showPlayer),
             new IconButton(
               onPressed: () {
-                showSearch(context: context, delegate: Search(widget._nameForDisplay));
+                showSearch(
+                    context: context, delegate: Search(widget._nameForDisplay));
               },
               icon: Icon(Icons.search),
             ),
             new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
-
           ],
-          centerTitle: true,
         ),
         body: Center(
           child: FutureBuilder<Names>(
@@ -249,62 +258,66 @@ class _NamesPageState extends State<NamesPage> {
             },
           ),
         ),
-
       ),
     );
   }
 
-void _showPlayer(){
-
-  showModalBottomSheet<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return Container(
-        height: 90,
-        child: Center(
-          child:Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center, //Center Row contents vertically
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.play_arrow,
+  void _showPlayer() {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 70,
+          child: Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment:
+                  CrossAxisAlignment.center, //Center Row contents vertically
+              children: [
+                IconButton(
+                  icon: Icon(
+                    Icons.play_arrow,
+                  ),
+                  iconSize: 40,
+                  color: Colors.blueAccent,
+                  onPressed: () {
+                    playAudio("audio/all.mp3");
+                  },
                 ),
-                iconSize: 40,
-                color: Colors.blueAccent,
-                onPressed: (){
-                  playAudio("audio/all.mp3");
-                },
-              ),
-              SizedBox(width: 30.0,),
-              IconButton(
-                icon: Icon(
-                  Icons.pause,
+                SizedBox(
+                  width: 30.0,
                 ),
-                iconSize: 40,
-                color: Colors.blueAccent,
-                onPressed: (){
-                  pauseAudio();
-                },
-              ),
-              SizedBox(width: 30.0,),
-              IconButton(
-                icon: Icon(
-                  Icons.stop,
+                IconButton(
+                  icon: Icon(
+                    Icons.pause,
+                  ),
+                  iconSize: 40,
+                  color: Colors.blueAccent,
+                  onPressed: () {
+                    pauseAudio();
+                  },
                 ),
-                iconSize: 40,
-                color: Colors.blueAccent,
-                onPressed: (){
-                  stopAudio();
-                },
-              ),
-            ],
+                SizedBox(
+                  width: 30.0,
+                ),
+                IconButton(
+                  icon: Icon(
+                    Icons.stop,
+                  ),
+                  iconSize: 40,
+                  color: Colors.blueAccent,
+                  onPressed: () {
+                    stopAudio();
+                  },
+                ),
+              ],
+            ),
           ),
-        ),
-      );
-    },
-  );
-}
+        );
+      },
+    );
+  }
+
   void _pushSaved() {
     Navigator.of(context).push(
       new MaterialPageRoute<void>(
@@ -349,9 +362,7 @@ void _showPlayer(){
                     )
                   ],
                 ),
-
                 subtitle: Text(name.meaning[myLocale.languageCode]),
-
                 trailing: Icon(
                   Icons.play_arrow,
                 ),
@@ -382,6 +393,7 @@ void _showPlayer(){
   Widget createListView(BuildContext context, AsyncSnapshot snapshot) {
     Locale myLocale = Localizations.localeOf(context);
     Names values = snapshot.data;
+    widget._nameForDisplay.clear();
     widget._nameForDisplay.addAll(values.names);
     return new ListView.builder(
       itemCount: values.names.length,
@@ -458,8 +470,29 @@ void _showPlayer(){
   }
 }
 
+bool isNumericUsing_tryParse(String string) {
+  // Null or empty string is not a number
+  if (string == null || string.isEmpty) {
+    return false;
+  }
+
+  // Try to parse input string to number. 
+  // Both integer and double work.
+  // Use int.tryParse if you want to check integer only.
+  // Use double.tryParse if you want to check double only.
+  final number = num.tryParse(string);
+
+  if (number == null) {
+    return false;
+  }
+
+  return true;
+}
+
 class Search extends SearchDelegate {
+   
   @override
+  
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
       IconButton(
@@ -487,51 +520,48 @@ class Search extends SearchDelegate {
   Widget buildResults(BuildContext context) {
     Locale myLocale = Localizations.localeOf(context);
     return Container(
-        child:        Card(
-          child: ListTile(
-            leading: CircleAvatar(
-              //backgroundColor: Colors.lightBlue,
-              child: Text(
-                selectedResult.number,
-                style: new TextStyle(
-                  color: Colors.white,
-                ),
+      child: Card(
+        child: ListTile(
+          leading: CircleAvatar(
+            //backgroundColor: Colors.lightBlue,
+            child: Text(
+              selectedResult.number,
+              style: new TextStyle(
+                color: Colors.white,
               ),
             ),
-            title: Row(
-              children: <Widget>[
-                (selectedResult.number == "00" ||
-                    selectedResult.number == "85")
-                    ? (Text(
-                  selectedResult.arabic,
-                  //style: TextStyle(fontWeight: FontWeight.bold),
-                  style: new TextStyle(
-                    fontFamily: ArabicFonts.Amiri,
-                    fontWeight: FontWeight.bold,
-                    package: 'google_fonts_arabic',
-                    fontSize: 1.0,
-                  ),
-                ))
-                    : Text(selectedResult.transliteration),
-                Spacer(flex: 1),
-                Text(
-                  selectedResult.arabic,
-                  //style: TextStyle(fontWeight: FontWeight.bold),
-                  style: new TextStyle(
-                    fontFamily: ArabicFonts.Amiri,
-                    fontWeight: FontWeight.bold,
-                    package: 'google_fonts_arabic',
-                    fontSize: 25.0,
-                  ),
-                ),
-              ],
-            ),
-            subtitle:
-            Text(selectedResult.meaning[myLocale.languageCode]),
-            //trailing: Icon(Icons.more_vert),
-
           ),
+          title: Row(
+            children: <Widget>[
+              (selectedResult.number == "00" || selectedResult.number == "85")
+                  ? (Text(
+                      selectedResult.arabic,
+                      //style: TextStyle(fontWeight: FontWeight.bold),
+                      style: new TextStyle(
+                        fontFamily: ArabicFonts.Amiri,
+                        fontWeight: FontWeight.bold,
+                        package: 'google_fonts_arabic',
+                        fontSize: 1.0,
+                      ),
+                    ))
+                  : Text(selectedResult.transliteration),
+              Spacer(flex: 1),
+              Text(
+                selectedResult.arabic,
+                //style: TextStyle(fontWeight: FontWeight.bold),
+                style: new TextStyle(
+                  fontFamily: ArabicFonts.Amiri,
+                  fontWeight: FontWeight.bold,
+                  package: 'google_fonts_arabic',
+                  fontSize: 25.0,
+                ),
+              ),
+            ],
+          ),
+          subtitle: Text(selectedResult.meaning[myLocale.languageCode]),
+          //trailing: Icon(Icons.more_vert),
         ),
+      ),
     );
   }
 
@@ -547,8 +577,11 @@ class Search extends SearchDelegate {
     query.isEmpty
         ? suggestionList = recentList //In the true case
         : suggestionList.addAll(listExample.where(
+            isNumericUsing_tryParse(query)?
+
             // In the false case
-            (element) => element.number.contains(query),
+            (element) => element.number.contains(query):
+            (element) => element.transliteration.contains(query),
           ));
     /*List<Name> suggestionList = query.isEmpty
         ? listExample
@@ -560,7 +593,7 @@ class Search extends SearchDelegate {
       itemCount: suggestionList.length,
       itemBuilder: (context, index) {
         Locale myLocale = Localizations.localeOf(context);
-       /* return ListTile(
+        /* return ListTile(
           title: Text(
             suggestionList[index].number,
           ),
@@ -577,17 +610,18 @@ class Search extends SearchDelegate {
           ),
           title: Row(
             children: <Widget>[
-              (suggestionList[index].number == "00" || suggestionList[index].number == "85")
+              (suggestionList[index].number == "00" ||
+                      suggestionList[index].number == "85")
                   ? Text(
-                suggestionList[index].arabic,
-                //style: TextStyle(fontWeight: FontWeight.bold),
-                style: new TextStyle(
-                  fontFamily: ArabicFonts.Amiri,
-                  fontWeight: FontWeight.bold,
-                  package: 'google_fonts_arabic',
-                  fontSize: 1.0,
-                ),
-              )
+                      suggestionList[index].arabic,
+                      //style: TextStyle(fontWeight: FontWeight.bold),
+                      style: new TextStyle(
+                        fontFamily: ArabicFonts.Amiri,
+                        fontWeight: FontWeight.bold,
+                        package: 'google_fonts_arabic',
+                        fontSize: 1.0,
+                      ),
+                    )
                   : Text(suggestionList[index].transliteration),
               Spacer(flex: 1),
               Text(
@@ -602,7 +636,6 @@ class Search extends SearchDelegate {
               )
             ],
           ),
-
           subtitle: Text(suggestionList[index].meaning[myLocale.languageCode]),
           onTap: () {
             selectedResult = suggestionList[index];
@@ -613,4 +646,3 @@ class Search extends SearchDelegate {
     );
   }
 }
-
